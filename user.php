@@ -7,7 +7,7 @@ class User extends \Model {
 	protected static $table = 'user';
 	public static $db = NULL;
 
-	public function __construct($id=array()) {
+	public function __construct($id='') {
 		parent::$db = self::$db;
 		parent::__construct($id);
 	}

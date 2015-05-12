@@ -287,7 +287,7 @@ kecik.init = function(config) {
     });
 
 
-    $('form').on('submit', function(event) {
+    $('form'+kecik.setting.form).on('submit', function(event) {
         var form = $(this);
         var file_input = $(this).find('input[type=file]');
 
