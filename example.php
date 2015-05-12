@@ -122,7 +122,7 @@
 				'btn_save'	: '#btn_save',
 				'btn_cancel': '#btn_cancel'
 			});
-
+			
 			$('.collapse').collapse();
 		</script>
 	</body>

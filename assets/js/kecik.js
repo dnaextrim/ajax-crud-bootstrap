@@ -45,7 +45,12 @@ if( !('setting' in window['kecik']) ) {
     'btn_save'      : '#btn_save',
 
     'bootstrap_convert' : true,
-    'table_convert'     : true
+    'table_convert'     : true,
+
+    'submit_func'     : true,
+    'insert_func'     : null,
+    'update_func'     : null,
+    'clear_func'      : null
   }
 }
 
@@ -109,79 +114,91 @@ kecik.init = function(config) {
             $(kecik.setting.btn_cancel).prepend('<i class="fa fa-close"></i> ');
         }
 
+        /*if (!$(kecik.setting.form).hasClass('form-horizontal')) {
+            $(kecik.setting.form).addClass('well form-horizontal');
+            $(kecik.setting.form).attr('enctype',"multipart/form-data");
+            if (typeof $.fn.dropzone !== 'undefined' && $('input[type=file]').length >0 ) {
+                $(kecik.setting.form).addClass('dropzone');
+            }
+        }*/
+
+        $(kecik.setting.form).attr('method', 'POST');
+        $(kecik.setting.form).attr('action', kecik.setting.insert_url);
+
+        if ($(kecik.setting.form_view).length <= 0) {
+            form_view = '<div class="modal-dialog"> \
+                        <div class="modal-content"> \
+                            <div class="modal-header"> \
+                                <h3 id="myModalLabel">View</h3> \
+                            </div> \
+                            \
+                            <div class="modal-body"><div class="well form-horizontal"></div></div> \
+                            <div class="modal-footer"> \
+                                <button aria-hidden="true" data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> Close</button> \
+                            </div> \
+                        </div> \
+                    </div>';
+
+            $(kecik.setting.form).parent().append('<div id="'+kecik.setting.form_view.replace('#', '').replace('.', '')+'" class="modal fade" aria-hidden="true" role="dialog"></div>');
+            $(kecik.setting.form_view).html(form_view);
+        }
+
+        if ($(kecik.setting.loading).length <= 0) {
+            loading = '<div class="modal-dialog"> \
+                        <div class="modal-content"> \
+                            <div class="modal-header"> \
+                                <h3 id="myModalLabel">In Progress.....</h3> \
+                            </div> \
+                            \
+                            <div class="modal-body"> \
+                                <!--<img src="http://localhost/kukang2/public/assets/sb-admin/images/gear_loader.gif">--> \
+                                <i class="fa fa-gear fa-spin fa-5x"></i> \
+                                <b>Please Wait.....</b> \
+                            </div> \
+                        </div> \
+                    </div>';
+
+            $(kecik.setting.form_box).parent().append('<div id="'+kecik.setting.loading.replace('#', '').replace('.', '')+'" class="modal fade" aria-hidden="true" role="dialog"></div>');
+            $(kecik.setting.loading).html(loading);
+        }
+
+
         if (!$(kecik.setting.form).hasClass('form-horizontal')) {
             $(kecik.setting.form).addClass('well form-horizontal');
             $(kecik.setting.form).attr('enctype',"multipart/form-data");
             if (typeof $.fn.dropzone !== 'undefined' && $('input[type=file]').length >0 ) {
                 $(kecik.setting.form).addClass('dropzone');
             }
+
+            $(kecik.setting.form).prepend($('<fieldset id="'+kecik.setting.form_fieldset.replace('#', '').replace('.', '')+'"></fieldset>'));
+
+            $(kecik.setting.form).children().not('fieldset').each(function() {
+
+                if ($(this).prop('tagName').toLowerCase() != 'fieldset')
+
+                if ($(this).prop('tagName').toLowerCase() == 'label')
+                    $(this).addClass('col-sm-3 control-label no-padding-right');
+
+                if ( $(this).prop('tagName').toLowerCase() != 'label' &&
+                     $(this).prop('tagName').toLowerCase() != 'button' &&
+                     $(this).attr('type') != 'hidden' ) {
+                    view = $(this).prev().prop('outerHTML');
+                    view += '<div class="col-sm-3"><p id="'+$(this).attr('id')+'" class="form-control-static '+kecik.setting.view_class+'"></p></div>';
+                    $(kecik.setting.form_view).find('.well.form-horizontal').append($('<div class="form-group"></div>').html(view));
+
+                    input = $(this).prev().wrap('<div class="form-group"></div>').parent().append($('<div class="col-sm-3"></div>').html($(this).addClass(kecik.setting.field_class)));
+                    $(kecik.setting.form+' fieldset').append(input);
+                }
+
+            });
+
+            $(kecik.setting.form+' fieldset').append($(kecik.setting.form+' input[type=hidden]'));
+            $(kecik.setting.form+' fieldset').append($(kecik.setting.form+' button'));
+            $(kecik.setting.form+' button').wrapAll('<div class="clearfix form-actions"></div>').wrapAll('<div class="col-md-offset-3 col-md-9"></div>');
+
+            $(kecik.setting.form).wrapAll('<div id="'+kecik.setting.form_box.replace('#', '').replace('.', '')+'"></div>');
         }
 
-        $(kecik.setting.form).attr('method', 'POST');
-        $(kecik.setting.form).attr('action', kecik.setting.insert_url);
-
-        $(kecik.setting.form).prepend($('<fieldset id="'+kecik.setting.form_fieldset+'"></fieldset>'));
-        
-
-        form_view = '<div class="modal-dialog"> \
-                    <div class="modal-content"> \
-                        <div class="modal-header"> \
-                            <h3 id="myModalLabel">View</h3> \
-                        </div> \
-                        \
-                        <div class="modal-body"><div class="well form-horizontal"></div></div> \
-                        <div class="modal-footer"> \
-                            <button aria-hidden="true" data-dismiss="modal" class="btn btn-default"><i class="fa fa-close"></i> Close</button> \
-                        </div> \
-                    </div> \
-                </div>';
-
-        $(kecik.setting.form).parent().append('<div id="'+kecik.setting.form_view.replace('#', '').replace('.', '')+'" class="modal fade" aria-hidden="true" role="dialog"></div>');
-        $(kecik.setting.form_view).html(form_view);
-
-        loading = '<div class="modal-dialog"> \
-                    <div class="modal-content"> \
-                        <div class="modal-header"> \
-                            <h3 id="myModalLabel">In Progress.....</h3> \
-                        </div> \
-                        \
-                        <div class="modal-body"> \
-                            <!--<img src="http://localhost/kukang2/public/assets/sb-admin/images/gear_loader.gif">--> \
-                            <i class="fa fa-gear fa-spin fa-5x"></i> \
-                            <b>Please Wait.....</b> \
-                        </div> \
-                    </div> \
-                </div>';
-
-        $(kecik.setting.form).parent().append('<div id="'+kecik.setting.loading.replace('#', '').replace('.', '')+'" class="modal fade" aria-hidden="true" role="dialog"></div>');
-        $(kecik.setting.loading).html(loading);
-
-        $(kecik.setting.form).children().not('fieldset').each(function() {
-
-            if ($(this).prop('tagName').toLowerCase() != 'fieldset')
-
-            if ($(this).prop('tagName').toLowerCase() == 'label')
-                $(this).addClass('col-sm-3 control-label no-padding-right');
-
-            if ( $(this).prop('tagName').toLowerCase() != 'label' &&
-                 $(this).prop('tagName').toLowerCase() != 'button' &&
-                 $(this).attr('type') != 'hidden' ) {
-                view = $(this).prev().prop('outerHTML');
-                view += '<div class="col-sm-3"><p id="'+$(this).attr('id')+'" class="form-control-static '+kecik.setting.view_class+'"></p></div>';
-                $(kecik.setting.form_view).find('.well.form-horizontal').append($('<div class="form-group"></div>').html(view));
-
-                input = $(this).prev().wrap('<div class="form-group"></div>').parent().append($('<div class="col-sm-3"></div>').html($(this).addClass(kecik.setting.field_class)));
-                $(kecik.setting.form+' fieldset').append(input);
-            }
-
-        });
-
-        $(kecik.setting.form+' fieldset').append($(kecik.setting.form+' input[type=hidden]'));
-        $(kecik.setting.form+' fieldset').append($(kecik.setting.form+' button'));
-        $(kecik.setting.form+' button').wrapAll('<div class="clearfix form-actions"></div>').wrapAll('<div class="col-md-offset-3 col-md-9"></div>');
-
-        $(kecik.setting.form).wrapAll('<div id="'+kecik.setting.form_box.replace('#', '').replace('.', '')+'"></div>');
-        
     }
 
     $('.hidden_input').hide();
@@ -292,6 +309,10 @@ kecik.init = function(config) {
         var file_input = $(this).find('input[type=file]');
 
         event.preventDefault();
+
+        if ($.isFunction(kecik.setting.submit_func)) {
+            if ( kecik.setting.submit_func() === false) return false;
+        }
 
         var form_serial = form.serialize();
         var submit_url = form.attr('action');
@@ -452,6 +473,13 @@ kecik.init = function(config) {
     var column = $.merge(action, kecik.setting.table_column);
 
     if (kecik.setting.table_convert === true) {
+
+        if (!$(kecik.setting.table).hasClass('table')) {
+            head = $(kecik.setting.table).find('thead tr');
+            head.addClass('navbar-default');
+            head.prepend('<th>&nbsp;</th>');
+        }
+
         if (!$(kecik.setting.table).hasClass('table'))
             $(kecik.setting.table).addClass('table');
 
@@ -460,10 +488,6 @@ kecik.init = function(config) {
 
         if (!$(kecik.setting.table).hasClass('table-hover'))
             $(kecik.setting.table).addClass('table-hover');
-
-        head = $(kecik.setting.table).find('thead tr');
-        head.addClass('navbar-default');
-        head.prepend('<th>&nbsp;</th>');
     }
 
     var oTable = $(kecik.setting.table).dataTable({
@@ -498,16 +522,25 @@ kecik.clearform = function(callback) {
     if ($(kecik.setting.form)[0] !== 'undefined')
         $(kecik.setting.form)[0].reset();
     $(kecik.setting.loading).modal('hide');
-    if (callback != undefined)
-        callback();
+    if ($.isFunction(callback))
+        kecik.setting.clear_func = callback;
+    else if ($.isFunction(kecik.setting.clear_func))
+        kecik.setting.clear_func();
+
 };
 
 kecik.Insert = function(callback) {
-    callback();
+    if ($.isFunction(callback))
+        kecik.setting.insert_func = callback;
+    else if ($.isFunction(kecik.setting.insert_func))
+        kecik.setting.insert_func();
 };
 
 kecik.Update = function(callback) {
-    callback();
+    if ($.isFunction(callback))
+        kecik.setting.update_func = callback;
+    else if ($.isFunction(kecik.setting.update_func))
+        kecik.setting.update_func();
 };
 
 kecik.Get = function(id) {
@@ -639,4 +672,12 @@ kecik.View = function(id) {
         }
         
     }, 'json');
+};
+
+
+kecik.beforeSubmit = function(callback) {
+    if (typeof callback !== 'undefined')
+        kecik.setting.submit_func = callback;
+    else
+        kecik.setting.submit_func = true;
 };
