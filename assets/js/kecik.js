@@ -291,7 +291,7 @@ kecik.init = function(config) {
     
     $(kecik.setting.btn_add).bind('click', function() {
         $(kecik.setting.form_box).show();
-        $('.'+kecik.setting.field_class+'a:first').focus();
+        $('.'+kecik.setting.field_class+':first').focus();
     });
     
     $(kecik.setting.btn_cancel).bind('click', function() {
@@ -505,6 +505,8 @@ kecik.init = function(config) {
         }
     });
 
+    $('input[type=search]:first').focus();
+
 };
 
 kecik.clearform = function(callback) {
@@ -526,6 +528,8 @@ kecik.clearform = function(callback) {
         kecik.setting.clear_func = callback;
     else if ($.isFunction(kecik.setting.clear_func))
         kecik.setting.clear_func();
+
+    $('input[type=search]:first').focus();
 
 };
 
