@@ -1,12 +1,12 @@
-/* 
+/*
  * ID: Saya akan sangat berterimakasih jika anda memberikan donasi untuk ini, anda dapat memberikan donasi berapapun
- *     yang anda mau, saya juga akan mencantumkan nama anda sebagai donatur kedalam file khusus yang akan selalu 
+ *     yang anda mau, saya juga akan mencantumkan nama anda sebagai donatur kedalam file khusus yang akan selalu
  *     disertakan dalam source code ini, saya tidak akan mencantum jumlah donasi, saya hanya mencantumkan nama saja. Tolong
  *     cantumkan keterangan dengan isi "Donasi Ajax Crud Bootstrap".
- * EN: I would be very grateful if you make a donation to this, you can donate whatever you want, I will put your name 
- *     as a donor into a special file will always be included in the source code, I would not fasten the number of 
+ * EN: I would be very grateful if you make a donation to this, you can donate whatever you want, I will put your name
+ *     as a donor into a special file will always be included in the source code, I would not fasten the number of
  *     donations, I just included name only. Please include a description with the contents of the "Donate Ajax Crud Bootstrap".
- * 
+ *
  * PayPal: dony_cavalera_md@yahoo.com
  * Rekening Mandiri: 113-000-6944-858, Atas Nama: Dony Wahyu Isprananda
  **/
@@ -24,7 +24,7 @@ if( !('setting' in window['kecik']) ) {
     'field_class'   : 'form-data',
     'view_class'    : 'form-view',
     'filter_class'  : 'filter',
-    
+
     'form'          : '#form_data',
     'form_bootstrap': true,
     'form_box'      : '#form_box',
@@ -212,19 +212,19 @@ kecik.init = function(config) {
         $(kecik.setting.form+" select").addClass('select2');
         $(kecik.setting.form+" select").css('width', '100%');
     }
-    
+
     if (!$(kecik.setting.form+" select").hasClass('select2'))
         $(kecik.setting.form+" select").addClass('form-control');
 
     if (typeof $.fn.select2 !== 'undefined')
         $(".select2").select2({'allowClear':true});
-    
+
     if (typeof $.fn.chosen !== 'undefined')
         $(".chosen").chosen();
 
     if (typeof autosize !== 'undefined')
         autosize($('textarea.autosize'));
-    
+
 
     if (typeof $.fn.datepicker !== 'undefined') {
         $('.datepicker').datepicker({
@@ -262,7 +262,7 @@ kecik.init = function(config) {
 
     if (typeof $.fn.markdown !== 'undefined')
         $("textarea.markdown").markdown({autofocus:false,savable:false})
-    
+
     if (typeof $.fn.colorpicker !== 'undefined')
         $('.colorpicker').colorpicker();
 
@@ -287,12 +287,12 @@ kecik.init = function(config) {
     });
 
     $('.'+kecik.setting.filter_class+':first').focus();
-    
+
     $(kecik.setting.btn_add).bind('click', function() {
         $(kecik.setting.form_box).show();
         $('.'+kecik.setting.field_class+':first').focus();
     });
-    
+
     $(kecik.setting.btn_cancel).bind('click', function() {
         $(kecik.setting.form_box).hide();
         kecik.clearform();
@@ -324,7 +324,7 @@ kecik.init = function(config) {
 
                 //for modern browsers that support FormData and uploading files via ajax
                 var fd = new FormData(form.get(0));
-                
+
 
                 upload_in_progress = true;
                 deferred = $.ajax({
@@ -338,7 +338,7 @@ kecik.init = function(config) {
                         var req = $.ajaxSettings.xhr();
                         if (req && req.upload) {
                             req.upload.addEventListener('progress', function(e) {
-                                if(e.lengthComputable) {    
+                                if(e.lengthComputable) {
                                     var done = e.loaded || e.position, total = e.total || e.totalSize;
                                     var percent = parseInt((done/total)*100) + '%';
                                     //percentage of uploaded file
@@ -350,7 +350,7 @@ kecik.init = function(config) {
                     beforeSend : function() {
                     },
                     success : function() {
-                        
+
                     }
                 });
 
@@ -359,7 +359,7 @@ kecik.init = function(config) {
                 //we use an iframe to upload the form(file) without leaving the page
                 upload_in_progress = true;
                 deferred = new $.Deferred
-                
+
                 var iframe_id = 'temporary-iframe-'+(new Date()).getTime()+'-'+(parseInt(Math.random()*1000));
                 $('form').after('<iframe id="'+iframe_id+'" name="'+iframe_id+'" frameborder="0" width="0" height="0" src="about:blank" style="position:absolute;z-index:-1;"></iframe>');
                 $('form').kecikend('<input type="hidden" name="temporary-iframe-id" value="'+iframe_id+'" />');
@@ -367,14 +367,14 @@ kecik.init = function(config) {
                 $('form').attr({'method' : 'POST', 'enctype' : 'multipart/form-data', 'target':iframe_id, 'action':submit_url});
 
                 $('form').get(0).submit();
-                
+
                 //if we don't receive the response after 60 seconds, declare it as failed!
                 setTimeout(function(){
                     var iframe = document.getElementById(iframe_id);
                     if(iframe != null) {
                         iframe.src = "about:blank";
                         $(iframe).remove();
-                        
+
                         deferred.reject({'status':'fail','message':'Timeout!'});
                     }
                 } , 60000);
@@ -384,7 +384,7 @@ kecik.init = function(config) {
             ////////////////////////////
             deferred.done(function(result){
                 upload_in_progress = false;
-                
+
                 if(result == '') {
                     //alert(result.message + ". Lokasi Server: " + result.url)
                     var oTable = $(kecik.setting.table).dataTable();
@@ -408,7 +408,7 @@ kecik.init = function(config) {
                 }
             }).fail(function(res){
                 upload_in_progress = false;
-                alert("There was an error");                        
+                alert("There was an error");
                 kecik.clearform();
                 $(kecik.setting.form_box).hide();
             });
@@ -417,11 +417,11 @@ kecik.init = function(config) {
             return false;
         } else {
             $(kecik.setting.form_fieldset).attr('disabled', true);
-            $.post( form.attr('action'), form_serial, function(data) {   
-                
+            $.post( form.attr('action'), form_serial, function(data) {
+
                 kecik.clearform();
                 $(kecik.setting.form_box).hide();
-                
+
                 if ($.isFunction(kecik.setting.after_submit_func)) {
                     if ( kecik.setting.after_submit_func() === false) return false;
                 }
@@ -434,7 +434,7 @@ kecik.init = function(config) {
                         oTable.fnDraw();
                     }
                 }, 'json');
-                
+
             });
 
             return false;
@@ -446,7 +446,7 @@ kecik.init = function(config) {
         {
             "data": "actions",
             "sortable": false,
-            "render": function (id) { 
+            "render": function (id) {
                 var actions = '<div class="visible-md visible-lg hidden-sm hidden-xs">';
                 var actions_mobile = '<div class="visible-xs visible-sm hidden-md hidden-lg"> \
                             <div class="dropdown"> \
@@ -525,9 +525,12 @@ kecik.clearform = function(callback) {
     $('input[type=hidden].'+kecik.setting.field_class).val('');
     $('textarea.'+kecik.setting.field_class).val('');
     $('.editor.'+kecik.setting.field_class).text('');
-    $('select.'+kecik.setting.field_class).val('');
-    if (typeof $.fn.select2 !== 'undefined' && $(".select2."+kecik.setting.field_class).length > 0)
-        $(".select2."+kecik.setting.field_class).select2('val','');
+    $('select.'+kecik.setting.field_class+' option:first').attr('selected','selected');
+    var select2 = $('select.form-data.select2');
+    select2.each(function(i,item){
+      $(item).select2("destroy");
+    });
+    select2.select2();
     $(kecik.setting.form).attr('action', kecik.setting.insert_url);
     $('.foto_box.'+kecik.setting.field_class).hide();
     $(kecik.setting.form_fieldset).attr('disabled', false);
@@ -564,16 +567,16 @@ kecik.Get = function(id, callback) {
     $.post(kecik.setting.get_url, // request ke file load_data.php
         id,
         function(data){
-            
-            if(data.error == undefined){ // jika respon error tidak terdefinisi maka pengambilan data sukses 
+
+            if(data.error == undefined){ // jika respon error tidak terdefinisi maka pengambilan data sukses
                 $(kecik.setting.form_box).show();
-                
+
                 for(var x=0; x<data.length; x++) {
                     $data = data[x];
                     $.each($data, function(id) {
-                        
+
                         if ( !$.isPlainObject(eval('$data.'+id)) ) {
-                            
+
                             if ( eval('$data.'+id) != '' && !$('#'+id).is('textarea') && $('input[id=\''+eval('$data.'+id)+'\']').attr('type') == 'radio' )
                                 $('input[id=\''+eval('$data.'+id)+'\]').attr('checked', true);
                             else if ( !$('#'+id).is('textarea') && $('input'+id).attr('type') == 'checkbox' ) {
@@ -595,17 +598,17 @@ kecik.Get = function(id, callback) {
                                     $('#'+id+"_old").val(eval('$data.'+id))
                             }
                         }
-                        
+
                     });
                 }
-                
+
                 if (typeof $.fn.select2 !== 'undefined') {
                     $(".select2."+kecik.setting.field_class).select2('destroy');
                     $(".select2."+kecik.setting.field_class).select2();
                 }
 
                 $('form').attr('action', kecik.setting.update_url);
-                
+
                 $('.'+kecik.setting.field_class+':first').focus();
 
                 if ($.isFunction(callback))
@@ -616,7 +619,7 @@ kecik.Get = function(id, callback) {
             }else{
                 alert(data.error); // jika ada respon error tampilkan alert
             }
-            
+
     }, 'json');
 };
 
@@ -633,7 +636,7 @@ kecik.Delete = function(id, callback) {
                     $.post(kecik.setting.delete_url, // request ke file load_data.php
                     id,
                     function(data){
-                        
+
                         if ($.isFunction(callback))
                             kecik.setting.delete_func = callback;
                         else if ($.isFunction(kecik.setting.delete_func))
@@ -641,7 +644,7 @@ kecik.Delete = function(id, callback) {
 
                         var oTable = $(kecik.setting.table).dataTable();
                         $.post(kecik.setting.find_url, null, function (json) {
-                            
+
                             oTable.fnClearTable();
                             if (json.data.length > 0) {
                                 oTable.fnAddData(json.data);
@@ -665,12 +668,12 @@ kecik.View = function(id) {
     $.post(kecik.setting.get_url, // request ke file load_data.php
     id,
     function(data){
-        
-        if(data.error == undefined){ // jika respon error tidak terdefinisi maka pengambilan data sukses 
-            
+
+        if(data.error == undefined){ // jika respon error tidak terdefinisi maka pengambilan data sukses
+
             for(var x=0; x<data.length; x++) {
                 $data = data[x];
-                
+
                 $.each($data, function(id) {
                     if ( !$.isPlainObject(eval('$data.'+id)+'.'+kecik.setting.view_class) ) {
                         if ( $('#'+id+'.'+kecik.setting.view_class).html() != undefined ) {
@@ -690,17 +693,17 @@ kecik.View = function(id) {
                             }
                         }
                     }
-                    
+
                 });
             }
 
-            
+
             $(kecik.setting.form_view).modal('show');
-            
+
         }else{
             alert(data.error); // jika ada respon error tampilkan alert
         }
-        
+
     }, 'json');
 };
 
